@@ -26,7 +26,7 @@ for REPOSITORY in $REPOS; do
 every element of list must be path to your borg backup repository 
 ```
 borg info [element of list ] --last 1 
-
+```
 Copy the systemd unit to `/etc/systemd/system` and run 
 
 ```
