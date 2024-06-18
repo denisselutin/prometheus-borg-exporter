@@ -10,9 +10,22 @@ Export borg information to prometheus.
 
 ## Install
 
+
 Copy `borg_exporter` to `/usr/local/bin`.
 
-Copy `borg.env` to `/etc/borg` and replace your repokey and repository in it.
+you need to change this part of script and generate list of your borgbackup repositories
+
+```
+REPOS=$(find /spool/backup/ -maxdepth 4 -type d | grep "VM-BACKUP/")
+
+for REPOSITORY in $REPOS; do
+
+	LIST=$(borg list "$REPOSITORY" |awk '{print $1}')
+```
+
+every element of list must be path to your borg backup repository 
+```
+borg info [element of list ] --last 1 
 
 Copy the systemd unit to `/etc/systemd/system` and run 
 
@@ -30,11 +43,8 @@ Make sure your node exporter uses `textfile` in `--collectors.enabled` and add t
 ## Example queries
 
 ```
-backup_total_size_dedup{job='node'}
-backup_last_size_dedup{job='node'}
-backup_chunks_total{job='node'}
+borg_backup_chunks_total
+borg_backup_last_date ## last_backup_date - 24h in epoch format
+borg_backup_last_size
 ```
 
-### Grafana dashboard
-
-See [here](https://grafana.net/dashboards/1573) for a sample grafana dashboard.
